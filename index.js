@@ -37,7 +37,8 @@ client.on("messageDelete", msg => {
       .setDescription(msg.content
         + "\n-- " + msg.author.username
         + " " + (now.getMonth() + 1) + "/" + now.getDate() + "/" + (now.getFullYear() % 100))
-      .setThumbnail(msg.author.avatarURL);
+      .setThumbnail(msg.author.avatarURL)
+      .setColor([31, 112, 53]);
     msg.channel.send(replay)
       .then(replayedMessage => { replayedMessage.delete(25000)});
   }
@@ -47,7 +48,7 @@ client.on("message", async msg => {
   if(msg.author.bot) return;
   if(msg.content.indexOf(prefix) !== 0) return;
   // Separate arguments into an array of words.
-  const args = msg.content.slice(prefix.length).trim().split(/\s/);
+  const args = msg.content.slice(prefix.length).trim().split(/ /);
   // Pop off the first item of args to be the command name.
   const command = args.shift().toLowerCase();
   // An emoji used for event reactions.
@@ -164,8 +165,11 @@ client.on("message", async msg => {
 
     // Utility method to clear chat log. Restricted to only testing server.
     case "clear123":
-      if (msg.guild.id === 659652679492173845) {
+      if (msg.guild.ownerID == 174682761854976001) {
+        console.log("Deleting all");
         msg.channel.bulkDelete(100);
+      } else {
+        console.log("Failure clear");
       }
       break;
 
