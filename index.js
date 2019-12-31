@@ -122,8 +122,10 @@ client.on("message", async msg => {
         return;
       }
       // Delete the message from the server.
-      msgToDelete = await msg.channel.fetchMessage(events[args[0]].msgID);
-      msgToDelete.delete().catch(err => {if (err) throw err;});
+      msgToDelete = await msg.channel.fetchMessage(events[args[0]].msgID).catch(console.error);
+      if (msgToDelete != null) {
+        msgToDelete.delete().catch(err => {if (err) throw err;});
+      }
       // Delete the key from the JSON file.
       delete events[args[0]];
       // Update the JSON file.
@@ -164,13 +166,21 @@ client.on("message", async msg => {
       break;
 
     // Utility method to clear chat log. Restricted to only testing server.
-    case "clear123":
+    case "clearall123":
       if (msg.guild.ownerID == 174682761854976001) {
         console.log("Deleting all");
         msg.channel.bulkDelete(100);
       } else {
         console.log("Failure clear");
       }
+      break;
+
+    // Utility method to clear pinned messages sent by this bot.
+    case "clearbot":
+      const pinnedMsgs = await msg.channel.fetchPinnedMessages().catch(console.error);
+      const botMsgID = await pinnedMsgs.findKey(pin => pin.author.tag === client.user.tag);
+      const botMsgToDelete = await msg.channel.fetchMessage(botMsgID);
+      botMsgToDelete.delete();
       break;
 
     default:
